@@ -2,33 +2,55 @@ import joblib
 import numpy as np
 import pandas as pd
 import uvicorn
-import time
+
+from fastapi import status
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 from app.app import *
 
 app = FastAPI()
 
-class Data(BaseModel):
-    id: str = None
-    project: str
-    messages: str
+topic_data = pd.read_csv("data/topic_data.csv")
 
 @app.get("/")
 def hello():
     return {"message":"Hello Sherlock"}
 
 
-@app.post('/predict')
+@app.get('/similar_tickets')
+async def similar_tickets(label: int, nb_tickets: int):
+    return topic_data[topic_data.topic == label][:nb_tickets][['Number', 'Description']]
+
+@app.get('/LDA_predict')
+async def LDA_predict(model_name: str, data: str):
+    embedded_data = preprocess(data)
+    LDA_model = joblib.load('models/LDA_models_50.pkl')
+    prediction = LDA_model.transform(embedded_data).argmax(axis=1)[0]
+    
+    top10Words = top_10_words(LDA_model, prediction)
+    top10Words = ' '.join(top10Words)
+        
+    result = str(prediction) + " - " + top10Words
+
+    return result
+
+
+@app.get('/predict')
 async def predict(model_name: str, data: str):
-
+    embedded_data = preprocess(data)
+    embedded_data = np.atleast_2d(embedded_data)
+    
     model = joblib.load('models/{}'.format(model_name))
-
-    pass
+    
+    prediction = str(model.predict(embedded_data)[0])
+    
+    
+    return prediction
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 """
 To cover:

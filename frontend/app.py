@@ -10,10 +10,6 @@ import streamlit as st
 from PIL import Image
 import requests
 
-
-
-# with st.sidebar:
-    
     
 st.title('IT Service Management')
 
@@ -46,34 +42,59 @@ st.sidebar.success('**Arun Singh SIVAPRAKASH**')
 st.sidebar.success('**Pramod Kumar NAGARAJ**')
 st.sidebar.success('**Van Tien NGUYEN**')
 
-st.title("Description")
-description = st.text_input(' ')
-if description:
-    pass
+description = st.text_input('Description: ')
 
-st.text(" \n")
+host = "http://localhost:8000"
+
+
+#model = st.selectbox('Select your model: ',('LDA', 'K-means'))
+option = st.selectbox('How much similar tickets you need?',('Top 2', 'Top 5', 'Top 10'))
+
+nb_tickets = {'Top 2': 2, 'Top 5':5, 'Top 10':10}
+
+model_names = {'LDA': 'LDA_models_50.pkl', 'K-means': 'kmeans_model_150.pkl'}
+
+st.text("Selected Model: LDA")
+predict_btn = st.button("Predict")
+if predict_btn:
+    if not description:
+        st.warning('Please input the description!')
+        st.stop()
+        
+    result = None
+    #if model == 'LDA':
+    result = requests.get(host + '/LDA_predict?model_name=LDA_models_50.pkl&data={}'.format(description))
+    #else:
+        #result = requests.get(host + '/predict?model_name=kmeans_model_150.pkl&data={}'.format(description))
+
+    label = int(result.json().split('-')[0])
+    
+    tickets = requests.get(host + '/similar_tickets?label={}&nb_tickets={}'.format(label, nb_tickets[option]))
+    
+    st.dataframe(pd.DataFrame(tickets.json()).set_index('Number'))
+
+
 
 """
 To cover
 - Please enter the Description
 """
 
-file = st.file_uploader("Upload the file")
-option = st.selectbox('How much similar tickets you need?',('Top 2', 'Top 5', 'Top 10'))
+#file = st.file_uploader("Upload the file")
 
-if file:
-    dataframe = pd.read_csv(file, sep=",")
-    if option == 'Top 2':
-        result = dataframe.head(2)
-        df = pd.DataFrame(result)
-        st.dataframe(df)
-        # st.write(result)
-    elif option == 'Top 5':
-        result = dataframe.head(5)
-        st.write(result)
-    elif option == 'Top 10':
-        result = dataframe.head(10)
-        st.write(result)
+#if file:
+#    dataframe = pd.read_csv(file, sep=",")
+#    if option == 'Top 2':
+#        result = dataframe.head(2)
+#        df = pd.DataFrame(result)
+#        st.dataframe(df)
+#        # st.write(result)
+##    elif option == 'Top 5':
+#        result = dataframe.head(5)
+#        st.write(result)
+#    elif option == 'Top 10':
+#        result = dataframe.head(10)
+#        st.write(result)
 
 """
 These are the similar tickets found from the previous records....!
