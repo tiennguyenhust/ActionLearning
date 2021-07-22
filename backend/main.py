@@ -2,13 +2,17 @@ import joblib
 import numpy as np
 import pandas as pd
 import uvicorn
-
+import time
 from fastapi import FastAPI
 from pydantic import BaseModel
 from app.app import *
 
 app = FastAPI()
 
+class Data(BaseModel):
+    id: str = None
+    project: str
+    messages: str
 
 @app.get("/")
 def hello():
