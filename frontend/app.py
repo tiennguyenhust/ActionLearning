@@ -38,16 +38,16 @@ urllib.request.urlretrieve(
 from PIL import Image
 image = Image.open('gfg.jpg')
 st.sidebar.title("ACTION LEARNING PROJECT")
-st.sidebar.success("TEAM: **ARTIFICIAL INTELLIGENCE SYSTEM** Group: 2!")
+st.sidebar.success("TEAM: **ARTIFICIAL INTELLIGENCE SYSTEM** (Group 2)!")
 st.sidebar.image(image, width=250)
-st.sidebar.markdown('Team member: ')
+st.sidebar.title('Team member: ')
 st.sidebar.success('**Alexander POPPE**')
 st.sidebar.success('**Arun Singh SIVAPRAKASH**')
 st.sidebar.success('**Pramod Kumar NAGARAJ**')
 st.sidebar.success('**Van Tien NGUYEN**')
 
-
-description = st.text_input('Description: ')
+st.title("Description")
+description = st.text_input(' ')
 if description:
     pass
 
@@ -55,14 +55,14 @@ st.text(" \n")
 
 """
 To cover
-- Please enter the discription
+- Please enter the Description
 """
 
 file = st.file_uploader("Upload the file")
 option = st.selectbox('How much similar tickets you need?',('Top 2', 'Top 5', 'Top 10'))
 
 if file:
-    dataframe = pd.read_csv(file, sep="\t")
+    dataframe = pd.read_csv(file, sep=",")
     if option == 'Top 2':
         result = dataframe.head(2)
         df = pd.DataFrame(result)
@@ -74,3 +74,7 @@ if file:
     elif option == 'Top 10':
         result = dataframe.head(10)
         st.write(result)
+
+"""
+These are the similar tickets found from the previous records....!
+"""
