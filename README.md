@@ -6,7 +6,7 @@ IT Service Management
   - Run backend service: direct to the backend folder and run: python main.py
   - Run frontend service: direct to the frontend folder and run: streamlit run app.py
   
-**2.  you can found the notebook files that preprocess the raw data and calculate the quality of tickets.**
+**2.  You can find the notebook files (backend/notebooks) that preprocess the raw data and calculate the quality of tickets.**
 
 **3. This app is also deployed in the heruko**
   - Streamlit Frontend: https://actionlearning-frontend.herokuapp.com/
